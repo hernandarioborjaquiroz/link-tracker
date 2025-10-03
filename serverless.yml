@@ -1,0 +1,90 @@
+service: link-tracker
+frameworkVersion: '3'
+
+# Variables reutilizables del proyecto
+custom:
+  tableName: ${self:service}-${sls:stage}-clicks
+  ttlDays: 90  # días antes de expirar items con TTL
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+  stage: dev
+  memorySize: 256
+  timeout: 6
+
+  # Variables de entorno expuestas a Lambda
+  environment:
+    TABLE_NAME: ${self:custom.tableName}
+    TTL_DAYS: ${self:custom.ttlDays}
+
+  # CORS del HTTP API (ajusta origins a tu dominio en prod)
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - GET
+      maxAge: 3600
+
+  # Permisos IAM mínimos para que Lambda pueda escribir en la tabla
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+          Resource:
+            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.tableName}
+
+functions:
+  trackClick:
+    handler: handler.track_click
+    events:
+      - httpApi:
+          method: GET
+          path: /track
+
+# Empaquetado: solo subimos lo necesario
+package:
+  patterns:
+    - '!**/*'
+    - 'handler.py'
+    - 'requirements.txt'
+
+# Recursos de CloudFormation
+resources:
+  Resources:
+    ClicksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+          - AttributeName: url
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: url-index
+            KeySchema:
+              - AttributeName: url
+                KeyType: HASH
+              - AttributeName: sk
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
