@@ -12,3 +12,19 @@ package-lock.json
 # OS
 .DS_Store
 Thumbs.db
+.venv/
+.serverless/
+__pycache__/
+*.pyc .venv/
+.serverless/
+__pycache__/
+*.pyc
+__pycache__/
+*.pyc
+.venv/
+.serverless/
+node_modules/
+.env
+values.json
+.DS_Store
+Thumbs.db

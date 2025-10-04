@@ -13,6 +13,13 @@ provider:
   stage: dev
   memorySize: 256
   timeout: 6
+  stackTags:
+    Project: link-tracker
+    ManagedBy: serverless
+    IaC: CloudFormation
+  tags:
+    Project: link-tracker
+    ManagedBy: serverless  
 
   # Variables de entorno expuestas a Lambda
   environment:
@@ -88,3 +95,7 @@ resources:
         TimeToLiveSpecification:
           AttributeName: ttl
           Enabled: true
+
+  
+  
+
