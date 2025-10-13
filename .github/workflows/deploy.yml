@@ -1,4 +1,4 @@
-name: Deploy Serverless AppSync API
+name: Deploy-link-tracker
 
 on:
   push:
