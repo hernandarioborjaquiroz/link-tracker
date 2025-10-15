@@ -7,7 +7,7 @@ on:
     branches:
       - master
       # Nota: Si tu rama principal es 'main', usa '- main' en su lugar.
-
+      - dev
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -44,13 +44,12 @@ jobs:
         # Ejecuta el despliegue a la etapa 'production'
         # Serverless ya está disponible globalmente desde el paso 3.
         run: serverless deploy --stage production
-on:
+  on:
   push:
     branches:
       - master
       - dev
-
-jobs:
+  jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
