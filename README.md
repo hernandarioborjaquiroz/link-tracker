@@ -1,3 +1,7 @@
+
+DESAFIO 3.
+LINK VIDEO 
+https://www.loom.com/edit/41666eabc5094e81927680640df6ae53
 # Link Tracker — Paso 3 (Estructura del repo)
 Desfío 3. El desafío
 Cree una API de backend de seguimiento de enlaces que haga lo siguiente:
